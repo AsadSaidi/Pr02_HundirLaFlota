@@ -54,18 +54,26 @@ function incializarBarcos(){
 
 incializarBarcos()
 
-function incializarTablero(){
-    let numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    let letras = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-    let tableroHTML = document.getElementById(tablero);
-    let codigoHTML = "";
+function inicializarTablero() {
+    let tableroHTML = document.getElementById("tablero");
+    let contenido = "";
+    let listaLetras = [" ","A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+    let listaNumeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    for(let i = 1; i < numeros.size; i++){
-        codigoHTML += "<tr>"
-        for(let j = 1; i < numeros.size; i++){
-            codigoHTML += `<td id="celda-${i}-${j}"`>
-        }
+    for (let i = 0; i < 11; i++) {
+        contenido += `<th>${listaLetras[i]}</th>`; 
     }
+
+    for (let i = 0; i < 10; i++) {
+        contenido += "<tr>";
+        contenido += `<tr><th>${listaNumeros[i]}</th>`;
+        for (let j = 0; j < 10; j++) { 
+            contenido += `<td id="celda-${i}-${j}"></td>`;
+        }
+        contenido += "</tr>";
+    }
+
+    tableroHTML.innerHTML = contenido;
 }
 
 /**
@@ -73,13 +81,9 @@ function incializarTablero(){
  */
 
 function colocarBarcos(listaBarcos){
-    let listaPosiciones = []
-    for(let i = 0; i < listaBarcos.size; i++){
-
-        listaBarcos.forEach( barco => {
-                
-        });
-    }
+    let posX = Math.random()
     
     
 }
+
+document.addEventListener("DOMContentLoaded", inicializarTablero);
