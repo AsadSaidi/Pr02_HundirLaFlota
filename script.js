@@ -33,8 +33,9 @@ class PosicionBarco {
 /**
  * INICIALIZAR TABLERO HTML
  */
+
 function inicializarTablero() {
-    let tableroHTML = document.getElementById("tablero");
+    let tableroHTML = document.getElementById("tableroUsuario");
     let contenido = "";
     let letras = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
     let numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -56,10 +57,34 @@ function inicializarTablero() {
     tableroHTML.innerHTML = contenido;
 }
 
+function inicializarTableroIA() {
+    let tableroHTML = document.getElementById("tableroIA");
+    let contenido = "";
+    let letras = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+    let numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    contenido += "<tr>";
+    for (let i = 0; i < 11; i++) {
+        contenido += `<th>${letras[i]}</th>`;
+    }
+    contenido += "</tr>";
+
+    for (let i = 0; i < 10; i++) {
+        contenido += `<tr><th>${numeros[i]}</th>`;
+        for (let j = 0; j < 10; j++) {
+            contenido += `<td id="celda-${i}-${j}" class="celda"></td>`;
+        }
+        contenido += "</tr>";
+    }
+
+    tableroHTML.innerHTML = contenido;
+}
+
+
 /**
  * INICIALIZAR POSICIONES DE LOS BARCOS
  */
-function inicializarBarcos() {
+function inicializarBarcosIA() {
     let barcosJSON = `[ 
         { "name": "Portaaviones", "size": 5, "orientacion": "vertical" },
         { "name": "Acorazado", "size": 4, "orientacion": "vertical" },
@@ -81,7 +106,7 @@ function inicializarBarcos() {
  * COLOCAR BARCOS:
  */
 function colocarBarcos(listaBarcos) {
-    let tablero = document.getElementById("tablero");
+    let tablero = document.getElementById("tableroIA");
     let lineaMatriz = Array(10).fill()
     let matrizOcupada = lineaMatriz.map(() => Array(10).fill(false));
 
@@ -111,7 +136,7 @@ function colocarBarcos(listaBarcos) {
                 } else {
                     puedeColocar = false;
                 }
-            } else { // Vertical
+            } else { 
                 if (posX + barco.tamanyo <= 10) {
                     for (let i = 0; i < barco.tamanyo; i++) {
                         if (matrizOcupada[posX + i][posY]) {
@@ -146,5 +171,6 @@ function colocarBarcos(listaBarcos) {
 
 document.addEventListener("DOMContentLoaded", () => {
     inicializarTablero();
-    inicializarBarcos();
+    inicializarTableroIA();
+    inicializarBarcosIA();
 });
