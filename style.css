@@ -45,7 +45,7 @@ td:hover {
 nav{
     display: flex;
     justify-content: center;
-    font-family: ;
+    font-family: 'Courier New', monospace;
     color: rgb(255, 255, 255);
     padding: 20px;
     background: #00076d;
@@ -62,4 +62,5 @@ body {
     background-repeat: no-repeat; 
     height: 100vh; 
     margin: 0;
+    max-width: 100vh;
 }
