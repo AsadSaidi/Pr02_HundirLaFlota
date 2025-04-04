@@ -40,6 +40,8 @@ td:hover {
     justify-content: center;
     align-items: center;
     gap: 100px;
+    width: 100%;
+    padding-top: 20px;
 }
 
 nav{
@@ -53,14 +55,51 @@ nav{
     align-items: start;
     margin-bottom: 80px;
     font-size: larger;
+    width: 100%;
 }
 
 body {
-    background-image: url("drown.jpg");
+    background-color: grey;
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat; 
     height: 100vh; 
     margin: 0;
-    max-width: 100vh;
+    width: 100vw; 
+    overflow-x: hidden;
 }
+
+#juegos{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#barcos{
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap:20px;
+}
+
+#barcos button{
+    padding: 20px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    background-color: #1e3a8a;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover{
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+}
+
+button.active {
+    background-color: #4068d4;
+}
+
