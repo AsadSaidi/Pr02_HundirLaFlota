@@ -103,3 +103,18 @@ button.active {
     background-color: #4068d4;
 }
 
+#instrucciones{
+    display: flex;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    color: rgb(255, 255, 255);
+}
+
+#instrucciones2{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    color: rgb(255, 255, 255);
+}
+

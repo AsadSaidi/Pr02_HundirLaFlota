@@ -1,3 +1,9 @@
+
+let barcoSeleccionado = null;
+let orientacionSeleccionada = "horizontal";
+//Array para saber que zonas estan llenas y cuales no
+let matrizUsuarioOcupada = Array.from({ length: 10 }, () => Array(10).fill(false));
+
 class Tablero {
     constructor() {
         this.tamanyo = 10;
@@ -12,7 +18,7 @@ class Barco {
         this.tamanyo = tamanyo;
         this.orientacion = orientacion;
         this.listaPosiciones = [];
-        this.colocado = false
+        this.colocado = false;
     }
 }
 
@@ -31,17 +37,17 @@ class PosicionBarco {
     }
 }
 
-// Crear un tablero HTML con prefijos únicos
 function inicializarTablero(tipo) {
+
     let tableroHTML;
-    if(tipo === "usuario"){
+    if (tipo === "usuario") {
         tableroHTML = document.getElementById("tableroUsuario");
     } else {
         tableroHTML = document.getElementById("tableroIA");
     }
-    
+
     let contenido = "";
-    let letras = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+    let letras = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
     let numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
     contenido += "<tr>";
@@ -61,165 +67,164 @@ function inicializarTablero(tipo) {
 
     tableroHTML.innerHTML = contenido;
 
-    for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 10; j++) {
-            let celda = document.getElementById(`${tipo}-celda-${i}-${j}`);
-            celda.addEventListener("mouseover", function() {
-                let x = celda.dataset.x;
-                let y = celda.dataset.y;
-                console.log("Posición X:", x, "Posición Y:", y); // Aquí tienes las coordenadas de la celda
-            });
+    if (tipo === "usuario") {
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+                let celda = document.getElementById(`${tipo}-celda-${i}-${j}`);
+                celda.addEventListener("click", () => colocarBarco(i, j));
+            }
         }
+    }
+}
+
+function mostrarBarcos(listaBarcos) {
+    let barcosBotones = document.getElementById("barcos");
+    barcosBotones.innerHTML = "";
+
+    listaBarcos.forEach(barco => {
+        if (!barco.colocado) {
+            let btn = document.createElement("button");
+            btn.innerText = `${barco.tamanyo} - ${barco.nombre}`;
+            btn.addEventListener("click", () => barcoSeleccionado = barco);
+            barcosBotones.appendChild(btn);
+        }
+    });
+}
+
+
+function colocarBarco(x, y) {
+
+    let puedeColocar = true; 
+    let posicionesTemp = []; // Array temporal para guardar las posiciones donde se colocará el barco
+
+    for (let i = 0; i < barcoSeleccionado.tamanyo; i++) {
+
+        if (orientacionSeleccionada === "vertical") {
+            coordenadaX = x + i;
+        } else {
+            coordenadaX = x;
+        }
+        
+        if (orientacionSeleccionada === "horizontal") {
+            coordenadaY = y + i;
+        } else {
+            coordenadaY = y;
+        }
+
+        if (coordenadaX >= 10) {
+            puedeColocar = false;
+        }
+
+        if (coordenadaY >= 10) {
+            puedeColocar = false;
+        }
+
+        if (matrizUsuarioOcupada[coordenadaX][coordenadaY]) {
+            puedeColocar = false;
+        }
+
+        posicionesTemp.push({ x: coordenadaX, y: coordenadaY });
+    }
+
+    if (puedeColocar) {
+
+        posicionesTemp.forEach(pos => {
+            matrizUsuarioOcupada[pos.x][pos.y] = true;
+            let celda = document.getElementById(`usuario-celda-${pos.x}-${pos.y}`);
+            celda.style.backgroundColor = "gray"; 
+            celda.innerText = barcoSeleccionado.nombre[0].toUpperCase(); 
+        });
+
+        barcoSeleccionado.colocado = true;
+        mostrarBarcos(listaBarcosUsuario);
+        barcoSeleccionado = null; 
     }
 }
 
 
 function colocarBarcosIA(listaBarcos, tipo = "ia") {
-    let lineaMatriz = Array(10).fill()
-    let matrizOcupada = lineaMatriz.map(() => Array(10).fill(false));
+    let matrizOcupada = Array.from({ length: 10 }, () => Array(10).fill(false));
 
     listaBarcos.forEach(barco => {
-        let colocado = false;
-        barco.listaPosiciones = [];
+        let colocado = false; 
 
         while (!colocado) {
-            let posX = Math.floor(Math.random() * 10);
-            let posY = Math.floor(Math.random() * 10);
-            let posicionesTemp = [];
-            let puedeColocar = true;
+            let posX = Math.floor(Math.random() * 10); 
+            let posY = Math.floor(Math.random() * 10); 
+            let posicionesTemp = []; 
+            let puedeColocar = true; 
 
             if (barco.orientacion === "horizontal") {
                 if (posY + barco.tamanyo <= 10) {
                     for (let i = 0; i < barco.tamanyo; i++) {
                         if (matrizOcupada[posX][posY + i]) {
-                            puedeColocar = false;
-                            break;
+                            puedeColocar = false; 
                         } else {
-                            posicionesTemp.push({ posicionX: posX, posicionY: posY + i });
+                            posicionesTemp.push({ x: posX, y: posY + i }); 
                         }
                     }
                 } else {
-                    puedeColocar = false;
+                    puedeColocar = false; 
                 }
             } else {
                 if (posX + barco.tamanyo <= 10) {
                     for (let i = 0; i < barco.tamanyo; i++) {
                         if (matrizOcupada[posX + i][posY]) {
-                            puedeColocar = false;
-                            break;
+                            puedeColocar = false; 
                         } else {
-                            posicionesTemp.push({ posicionX: posX + i, posicionY: posY });
+                            posicionesTemp.push({ x: posX + i, y: posY }); 
                         }
                     }
                 } else {
-                    puedeColocar = false;
+                    puedeColocar = false; 
                 }
             }
 
+
             if (puedeColocar) {
-                posicionesTemp.forEach(posicion => {
-                    matrizOcupada[posicion.posicionX][posicion.posicionY] = true;
-                    let celdaId = `${tipo}-celda-${posicion.posicionX}-${posicion.posicionY}`;
-                    let celda = document.getElementById(celdaId);
+                posicionesTemp.forEach(pos => {
+                    matrizOcupada[pos.x][pos.y] = true; 
+                    let celda = document.getElementById(`${tipo}-celda-${pos.x}-${pos.y}`);
                     if (celda) {
-                        celda.style.backgroundColor = "gray";
-                        celda.innerText = barco.nombre[0].toUpperCase();
+                        celda.style.backgroundColor = "gray"; 
+                        celda.innerText = barco.nombre[0].toUpperCase(); 
                     }
                 });
-
-                barco.listaPosiciones = posicionesTemp;
-                colocado = true;
+                colocado = true; 
             }
         }
     });
 }
 
-function colocarBarcoUsuario(listaBarcos, tipo = "ia") {
-    let lineaMatriz = Array(10).fill()
-    let matrizOcupada = lineaMatriz.map(() => Array(10).fill(false));
-
-    listaBarcos.forEach(barco => {
-        let colocado = false;
-        barco.listaPosiciones = [];
-
-        while (!colocado) {
-            let posX = Math.floor(Math.random() * 10);
-            let posY = Math.floor(Math.random() * 10);
-            let posicionesTemp = [];
-            let puedeColocar = true;
-
-            if (barco.orientacion === "horizontal") {
-                if (posY + barco.tamanyo <= 10) {
-                    for (let i = 0; i < barco.tamanyo; i++) {
-                        if (matrizOcupada[posX][posY + i]) {
-                            puedeColocar = false;
-                            break;
-                        } else {
-                            posicionesTemp.push({ posicionX: posX, posicionY: posY + i });
-                        }
-                    }
-                } else {
-                    puedeColocar = false;
-                }
-            } else {
-                if (posX + barco.tamanyo <= 10) {
-                    for (let i = 0; i < barco.tamanyo; i++) {
-                        if (matrizOcupada[posX + i][posY]) {
-                            puedeColocar = false;
-                            break;
-                        } else {
-                            posicionesTemp.push({ posicionX: posX + i, posicionY: posY });
-                        }
-                    }
-                } else {
-                    puedeColocar = false;
-                }
-            }
-
-            if (puedeColocar) {
-                posicionesTemp.forEach(posicion => {
-                    matrizOcupada[posicion.posicionX][posicion.posicionY] = true;
-                    let celdaId = `${tipo}-celda-${posicion.posicionX}-${posicion.posicionY}`;
-                    let celda = document.getElementById(celdaId);
-                    if (celda) {
-                        celda.style.backgroundColor = "gray";
-                        celda.innerText = barco.nombre[0].toUpperCase();
-                    }
-                });
-
-                barco.listaPosiciones = posicionesTemp;
-                colocado = true;
-            }
-        }
-    });
-}
-
-function mostrarBarcos(listaBarcos){
-    let barcosBotones = document.getElementById("barcos")
-    
-    listaBarcos.forEach(barco =>{
-        if(barco.colocado === false){
-            barcosBotones.innerHTML += "<button>" + barco.tamanyo + " - " + barco.nombre + "</button>"
-        }
-    })
-}
+let listaBarcosUsuario = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     inicializarTablero("usuario");
     inicializarTablero("ia");
 
     const barcosJSON = `[ 
-        { "name": "Portaaviones", "size": 5, "orientacion": "vertical", "colocado": false },
-        { "name": "Acorazado", "size": 4, "orientacion": "vertical", "colocado": false  },
-        { "name": "Crucero", "size": 3, "orientacion": "horizontal", "colocado": false  },
-        { "name": "Submarino", "size": 3, "orientacion": "vertical", "colocado": false  },
-        { "name": "Destructor", "size": 2, "orientacion": "horizontal", "colocado": false  }
+        { "name": "Portaaviones", "size": 5, "orientacion": "vertical" },
+        { "name": "Acorazado", "size": 4, "orientacion": "vertical" },
+        { "name": "Crucero", "size": 3, "orientacion": "horizontal" },
+        { "name": "Submarino", "size": 3, "orientacion": "vertical" },
+        { "name": "Destructor", "size": 2, "orientacion": "horizontal" }
     ]`;
-    
-    let listaBarcos = JSON.parse(barcosJSON).map(b => new Barco(b.name, b.size, b.orientacion));
-    let listaBarcosUsuario = JSON.parse(barcosJSON).map(b => new Barco(b.name, b.size, b.orientacion, b.colocado));
-    console.log(listaBarcos)
-    mostrarBarcos(listaBarcos)
-    colocarBarcosIA(listaBarcos, "ia");
+
+    let listaBarcosIA = JSON.parse(barcosJSON).map(b => new Barco(b.name, b.size, b.orientacion));
+    listaBarcosUsuario = JSON.parse(barcosJSON).map(b => new Barco(b.name, b.size, b.orientacion));
+
+    mostrarBarcos(listaBarcosUsuario);
+    colocarBarcosIA(listaBarcosIA, "ia");
 });
 
+//Para cambiar la orientación del barco con teclas
+document.addEventListener("keydown", (event) => {
+    let instruccion = document.getElementById("instrucciones")
+    if (event.key.toLowerCase() === "h") {
+        instruccion.innerHTML = "<h3>Horizontal</h3>"
+        orientacionSeleccionada = "horizontal";
+    } else if (event.key.toLowerCase() === "v") {
+        instruccion.innerHTML = "<h3>Vertical</h3>"
+        orientacionSeleccionada = "vertical";
+    }
+});
