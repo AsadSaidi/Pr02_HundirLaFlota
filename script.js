@@ -217,6 +217,34 @@ document.addEventListener("DOMContentLoaded", () => {
     colocarBarcosIA(listaBarcosIA, "ia");
 });
 
+// Mostrar los botones de los barcos
+function mostrarBarcos(listaBarcos) {
+    let barcosBotones = document.getElementById("barcos");
+    barcosBotones.innerHTML = "";
+
+    listaBarcos.forEach(barco => {
+        if (!barco.colocado) {
+            let btn = document.createElement("button");
+            btn.innerText = `${barco.tamanyo} - ${barco.nombre}`;
+            
+            // Cuando se hace clic en un botón, se selecciona el barco
+            btn.addEventListener("click", () => {
+                // Quitar la clase active de cualquier otro botón
+                document.querySelectorAll("#barcos button").forEach(button => {
+                    button.classList.remove("active");  // Quita la clase 'active' de todos los botones
+                });
+                
+                // Añadir la clase active al botón seleccionado
+                btn.classList.add("active");  // Añade la clase 'active' al botón clickeado
+                barcoSeleccionado = barco; // Guarda el barco seleccionado
+            });
+
+            barcosBotones.appendChild(btn);
+        }
+    });
+}
+
+
 //Para cambiar la orientación del barco con teclas
 document.addEventListener("keydown", (event) => {
     let instruccion = document.getElementById("instrucciones")
