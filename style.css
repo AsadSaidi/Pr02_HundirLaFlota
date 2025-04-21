@@ -178,3 +178,102 @@ body, #contenedor {
     margin: 0 auto; /* Centra el contenedor horizontalmente */
     padding-top: 30px;
 }
+
+/* Estilos para el mensaje final y el botón de volver a jugar */
+#mensajeFinal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#mensajeFinal h2 {
+    font-size: 32px;
+    color: #ff6347;
+    margin-bottom: 15px;
+}
+
+#mensajeFinal p {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+#mensajeFinal button {
+    padding: 12px 24px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#mensajeFinal button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* Estilo para el botón de jugar cuando los barcos están colocados */
+#botonJugar {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#botonJugar:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Estilos para el mensaje final y el botón de volver a jugar */
+#mensajeFinal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#mensajeFinal h2 {
+    font-size: 32px;
+    color: #ff6347;
+    margin-bottom: 15px;
+}
+
+#mensajeFinal p {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+#mensajeFinal button {
+    padding: 12px 24px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#mensajeFinal button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
