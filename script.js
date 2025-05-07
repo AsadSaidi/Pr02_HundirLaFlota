@@ -17,6 +17,133 @@ class Tablero {
     obtenerCelda(x, y) {
         return this.matrizCasillas[x][y];
     }
+
+    //Funcion para colocar los barcos del usuario, donde y cuando haga click
+    colocarBarco(x, y) {
+        if (!barcoSeleccionado) return;
+        let puedeColocar = true;
+        let posicionesTemp = [];
+
+        for (let i = 0; i < barcoSeleccionado.tamanyo; i++) {
+            let coordenadaX;
+            let coordenadaY;
+
+            if (orientacionSeleccionada === "vertical") {
+                coordenadaX = x + i;
+            } else {
+                coordenadaX = x;
+            }
+
+            if (orientacionSeleccionada === "horizontal") {
+                coordenadaY = y + i;
+            } else {
+                coordenadaY = y;
+            }
+
+            if (coordenadaX >= 10 || coordenadaY >= 10 || matrizUsuarioOcupada[coordenadaX][coordenadaY]) {
+                puedeColocar = false;
+                break;
+            }
+
+            posicionesTemp.push({ x: coordenadaX, y: coordenadaY });
+        }
+
+        if (puedeColocar) {
+            posicionesTemp.forEach(pos => {
+                matrizUsuarioOcupada[pos.x][pos.y] = true;
+                let celda = tableroUsuario.obtenerCelda(pos.x, pos.y);
+                celda.estado = "barco";
+                celda.barco = barcoSeleccionado;
+
+                let htmlCelda = document.getElementById(`usuario-celda-${pos.x}-${pos.y}`);
+                htmlCelda.style.backgroundColor = "gray";
+                htmlCelda.innerText = barcoSeleccionado.nombre[0].toUpperCase();
+            });
+
+            barcoSeleccionado.listaPosiciones = posicionesTemp;
+            barcoSeleccionado.colocado = true;
+            tableroUsuario.listaBarcos.push(barcoSeleccionado);
+            barcoSeleccionado = null;
+            tableroUsuario.mostrarBarcos(listaBarcosUsuario);
+
+            if (listaBarcosUsuario.every(barco => barco.colocado)) {
+                activarBotonJugar();
+            }
+        }
+    };
+
+    //Funcion para mostrar los barcos cuando se van colocando
+    mostrarBarcos(listaBarcos) {
+        let barcosBotones = document.getElementById("barcos");
+        barcosBotones.innerHTML = "";
+
+        listaBarcos.forEach(barco => {
+            if (!barco.colocado) {
+                let btn = document.createElement("button");
+                btn.innerText = `${barco.tamanyo} - ${barco.nombre}`;
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll("#barcos button").forEach(buton => buton.classList.remove("active"));
+                    btn.classList.add("active");
+                    barcoSeleccionado = barco;
+                });
+                barcosBotones.appendChild(btn);
+            }
+        });
+    }
+
+    //Funcion que coloca los barcos de la ia
+    colocarBarcosIA(listaBarcos) {
+        listaBarcos.forEach(barco => {
+            let colocado = false;
+    
+            while (!colocado) {
+                let posX = Math.floor(Math.random() * 10);
+                let posY = Math.floor(Math.random() * 10);
+                let posicionesTemp = [];
+                let puedeColocar = true;
+    
+                if (barco.orientacion === "horizontal") {
+                    if (posY + barco.tamanyo <= 10) {
+                        for (let i = 0; i < barco.tamanyo; i++) {
+                            if (matrizIAOcupada[posX][posY + i]) {
+                                puedeColocar = false;
+                            } else {
+                                posicionesTemp.push({ x: posX, y: posY + i });
+                            }
+                        }
+                    } else {
+                        puedeColocar = false;
+                    }
+                } else {
+                    if (posX + barco.tamanyo <= 10) {
+                        for (let i = 0; i < barco.tamanyo; i++) {
+                            if (matrizIAOcupada[posX + i][posY]) {
+                                puedeColocar = false;
+                            } else {
+                                posicionesTemp.push({ x: posX + i, y: posY });
+                            }
+                        }
+                    } else {
+                        puedeColocar = false;
+                    }
+                }
+    
+                if (puedeColocar) {
+                    posicionesTemp.forEach(pos => {
+                        matrizIAOcupada[pos.x][pos.y] = true;
+                        let celda = tableroIA.obtenerCelda(pos.x, pos.y);
+                        celda.estado = "barco";
+                        celda.barco = barco;
+                    });
+    
+                    barco.listaPosiciones = posicionesTemp;
+                    barco.colocado = true;
+                    tableroIA.listaBarcos.push(barco);
+                    colocado = true;
+                }
+            }
+        });
+    }
 }
 
 class Barco {
@@ -32,6 +159,9 @@ class Barco {
     estaHundido() {
         return this.tocados >= this.tamanyo;
     }
+
+
+
 }
 
 class Celda {
@@ -83,7 +213,7 @@ function inicializarTableroUsuario() {
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
             let celda = document.getElementById(`usuario-celda-${i}-${j}`);
-            celda.addEventListener("click", () => colocarBarco(i, j));
+            celda.addEventListener("click", () => tableroUsuario.colocarBarco(i, j));
         }
     }
 }
@@ -124,133 +254,6 @@ function inicializarTableroIA() {
     }
 }
 
-
-//Funcion para colocar los barcos del usuario, donde y cuando haga click
-function colocarBarco(x, y) {
-    if (!barcoSeleccionado) return;
-    let puedeColocar = true;
-    let posicionesTemp = [];
-
-    for (let i = 0; i < barcoSeleccionado.tamanyo; i++) {
-        let coordenadaX;
-        let coordenadaY;
-
-        if (orientacionSeleccionada === "vertical") {
-            coordenadaX = x + i;
-        } else {
-            coordenadaX = x;
-        }
-
-        if (orientacionSeleccionada === "horizontal") {
-            coordenadaY = y + i;
-        } else {
-            coordenadaY = y;
-        }
-
-        if (coordenadaX >= 10 || coordenadaY >= 10 || matrizUsuarioOcupada[coordenadaX][coordenadaY]) {
-            puedeColocar = false;
-            break;
-        }
-
-        posicionesTemp.push({ x: coordenadaX, y: coordenadaY });
-    }
-
-    if (puedeColocar) {
-        posicionesTemp.forEach(pos => {
-            matrizUsuarioOcupada[pos.x][pos.y] = true;
-            let celda = tableroUsuario.obtenerCelda(pos.x, pos.y);
-            celda.estado = "barco";
-            celda.barco = barcoSeleccionado;
-
-            let htmlCelda = document.getElementById(`usuario-celda-${pos.x}-${pos.y}`);
-            htmlCelda.style.backgroundColor = "gray";
-            htmlCelda.innerText = barcoSeleccionado.nombre[0].toUpperCase();
-        });
-
-        barcoSeleccionado.listaPosiciones = posicionesTemp;
-        barcoSeleccionado.colocado = true;
-        tableroUsuario.listaBarcos.push(barcoSeleccionado);
-        barcoSeleccionado = null;
-        mostrarBarcos(listaBarcosUsuario);
-
-        if (listaBarcosUsuario.every(barco => barco.colocado)) {
-            activarBotonJugar();
-        }
-    }
-};
-
-//Funcion para mostrar los barcos cuando se van colocando
-function mostrarBarcos(listaBarcos) {
-    let barcosBotones = document.getElementById("barcos");
-    barcosBotones.innerHTML = "";
-
-    listaBarcos.forEach(barco => {
-        if (!barco.colocado) {
-            let btn = document.createElement("button");
-            btn.innerText = `${barco.tamanyo} - ${barco.nombre}`;
-            btn.addEventListener("click", () => {
-                document.querySelectorAll("#barcos button").forEach(buton => buton.classList.remove("active"));
-                btn.classList.add("active");
-                barcoSeleccionado = barco;
-            });
-            barcosBotones.appendChild(btn);
-        }
-    });
-}
-
-//Funcion que coloca los barcos de la ia
-function colocarBarcosIA(listaBarcos) {
-    listaBarcos.forEach(barco => {
-        let colocado = false;
-
-        while (!colocado) {
-            let posX = Math.floor(Math.random() * 10);
-            let posY = Math.floor(Math.random() * 10);
-            let posicionesTemp = [];
-            let puedeColocar = true;
-
-            if (barco.orientacion === "horizontal") {
-                if (posY + barco.tamanyo <= 10) {
-                    for (let i = 0; i < barco.tamanyo; i++) {
-                        if (matrizIAOcupada[posX][posY + i]) {
-                            puedeColocar = false;
-                        } else {
-                            posicionesTemp.push({ x: posX, y: posY + i });
-                        }
-                    }
-                } else {
-                    puedeColocar = false;
-                }
-            } else {
-                if (posX + barco.tamanyo <= 10) {
-                    for (let i = 0; i < barco.tamanyo; i++) {
-                        if (matrizIAOcupada[posX + i][posY]) {
-                            puedeColocar = false;
-                        } else {
-                            posicionesTemp.push({ x: posX + i, y: posY });
-                        }
-                    }
-                } else {
-                    puedeColocar = false;
-                }
-            }
-
-            if (puedeColocar) {
-                posicionesTemp.forEach(pos => {
-                    matrizIAOcupada[pos.x][pos.y] = true;
-                    let celda = tableroIA.obtenerCelda(pos.x, pos.y);
-                    celda.estado = "barco";
-                    celda.barco = barco;
-                });
-
-                barco.listaPosiciones = posicionesTemp;
-                barco.colocado = true;
-                tableroIA.listaBarcos.push(barco);
-                colocado = true;
-            }
-        }
-    });
-}
 
 //Funcion para mostrar el boton de jugar cuando todos los barcos estan colocados
 function activarBotonJugar() {
@@ -378,8 +381,8 @@ function reiniciarJuego() {
     // Re-inicializar tableros y barcos
     inicializarTableroUsuario();
     inicializarTableroIA();
-    mostrarBarcos(listaBarcosUsuario);
-    colocarBarcosIA(listaBarcosIA);
+    tableroUsuario.mostrarBarcos(listaBarcosUsuario);
+    tableroIA.colocarBarcosIA(listaBarcosIA);
 
     // Ocultar formulario de disparo IA
     document.getElementById("formularioDisparo").style.display = "none";
@@ -406,8 +409,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let listaBarcosIA = JSON.parse(barcosJSON).map(b => new Barco(b.name, b.size, b.orientacion));
     listaBarcosUsuario = JSON.parse(barcosJSON).map(b => new Barco(b.name, b.size, b.orientacion));
 
-    mostrarBarcos(listaBarcosUsuario);
-    colocarBarcosIA(listaBarcosIA);
+    tableroUsuario.mostrarBarcos(listaBarcosUsuario);
+    tableroIA.colocarBarcosIA(listaBarcosIA);
 
     const form = document.createElement("div");
     form.id = "formularioDisparo";
