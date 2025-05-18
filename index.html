@@ -10,7 +10,29 @@
 </head>
 <body>
     <nav> HUNDIR LA FLOTA</nav>
-    <div id="juego">
+    
+    <!-- Menú Principal -->
+    <div id="menuPrincipal" class="menu-principal">
+        <h1>Hundir la Flota</h1>
+        <div class="menu-botones">
+            <button id="nuevaPartida">Nueva Partida</button>
+            <button id="cargarPartida">Cargar Partida</button>
+        </div>
+    </div>
+
+    <!-- Modal para lista de partidas -->
+    <div id="modalPartidas" class="modal">
+        <div class="modal-contenido">
+            <h2>Partidas Guardadas</h2>
+            <div id="listaPartidas" class="lista-partidas">
+                <!-- Las partidas se cargarán aquí dinámicamente -->
+            </div>
+            <button id="cerrarModal" class="cerrar-modal">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Sección del juego (inicialmente oculta) -->
+    <div id="juego" style="display: none;">
         <div id="instrucciones"></div>
         <div id="barcos"></div>
         <section id="tableros">
@@ -21,7 +43,13 @@
                 <tbody></tbody>
             </table>
         </section>
+        <!-- Botones de guardar/cargar durante la partida -->
+        <div class="botones-partida">
+            <button id="guardarPartida">Guardar Partida</button>
+            <button id="volverMenu">Volver al Menú</button>
+        </div>
     </div>
+
     <div id="instrucciones2"> Pulsar V o H para cambiar la orientación del barco</div>
 
     <div id="mensajeFinal" style="display: none;">
